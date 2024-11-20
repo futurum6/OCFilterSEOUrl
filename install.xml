@@ -1,0 +1,75 @@
+<modification>
+    <name>OCFilterSEO</name>
+    <code>ocfilterseo</code>
+    <version>1.0</version>
+    <author>futurum6</author>
+    <link>https://github.com/futurum6</link>
+    <file path="catalog/view/theme/*/template/extension/module/ocfilter48/module.twig">
+        <operation error="skip">
+            <search trim="true"><![CDATA[
+                 {% include('default/template/extension/module/ocfilter48/filter_list.twig') %}
+                ]]></search>
+            <add position="replace"><![CDATA[
+               {% include('default/template/extension/module/ocfilterseo/filter_list.twig') %}
+            ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/extension/module/ocfilter48/module.twig">
+        <operation error="skip">
+            <search trim="true"><![CDATA[
+                     <script>
+                ]]></search>
+            <add position="after"><![CDATA[
+                    $('.ocf-value').on('click', function(e) {
+                        e.preventDefault();
+                    });
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/extension/module/ocfilter.php">
+        <operation error="skip">
+            <search trim="true"><![CDATA[
+                $data['javascript'] = 'catalog/view/javascript/ocfilter48/ocfilter.js?v=' . OCF_VERSION;
+            ]]></search>
+            <add position="after"><![CDATA[
+				$data['filters'] = $this->load->controller('extension/module/ocfilterseo/addLincks', $data['filters']);
+            ]]></add>
+        </operation>
+		<operation error="skip">
+            <search trim="true"><![CDATA[
+                 $json['params'] = $this->ocfilter->seo->getParams();
+            ]]></search>
+            <add position="replace"><![CDATA[
+    			 //$json['params'] = $this->ocfilter->seo->getParams();
+            ]]></add>
+        </operation>
+      		<operation error="skip">
+            <search trim="true"><![CDATA[
+                 $json['decode'] = $this->ocfilter->params->get();
+            ]]></search>
+            <add position="replace"><![CDATA[
+    			 //$json['decode'] = $this->ocfilter->params->get();
+            ]]></add>
+        </operation>
+      		<operation error="skip">
+            <search trim="true"><![CDATA[
+                 $json['href'] = str_replace('&amp;', '&', $this->ocfilter->seo->link($this->ocfilter->seo->getParams()));
+            ]]></search>
+            <add position="replace"><![CDATA[
+    			 //$json['href'] = str_replace('&amp;', '&', $this->ocfilter->seo->link($this->ocfilter->seo->getParams()));
+              	$parameter = $this->ocfilter->seo->getParams();
+                 $parameters = $this->ocfilter->params->decode($parameter);
+                  ksort($parameters);
+                  foreach ($parameters as $key => $values) {
+                    asort($parameters[$key]);
+                  }
+                  $json['params']  = $this->ocfilter->params->encode($parameters);
+                  $json['decode'] = $this->ocfilter->params->get();
+                  $json['href'] = str_replace('&amp;', '&', $this->ocfilter->seo->link($json['params']));
+            ]]></add>
+        </operation>
+    </file>
+
+</modification>
